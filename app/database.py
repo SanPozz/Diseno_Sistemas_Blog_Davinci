@@ -7,8 +7,9 @@ def init_db(app):
 
     with app.app_context():
 
-        # importar modelos
+        from app.models.Users import User;
+        from app.models.Posts import Post;
 
         db.create_all();
-        
+
         print("Base de datos creada!");
