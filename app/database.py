@@ -9,6 +9,7 @@ def init_db(app):
 
         from app.models.Users import User;
         from app.models.Posts import Post;
+        from app.models.Categories import Category;
 
         db.create_all();
 
