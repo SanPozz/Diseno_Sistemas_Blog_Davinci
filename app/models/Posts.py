@@ -25,6 +25,7 @@ class Post(db.Model):
     updated_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp());
 
     categories = db.relationship("Category", secondary="category_post", back_populates="posts", lazy=True);
+    comments = db.relationship("Comment", back_populates="post", lazy=True);
 
     def __repr__(self):
         return f"<Post {self.title} Post ID: {self.id}>";
@@ -39,5 +40,6 @@ class Post(db.Model):
             "visitas": self.visitas,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
-            "categories": [category.to_dict() for category in self.categories]
+            "categories": [category.to_dict() for category in self.categories],
+            "comments": [comment.to_dict() for comment in self.comments]
         };

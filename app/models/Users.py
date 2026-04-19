@@ -15,6 +15,7 @@ class User(db.Model, UserMixin):
     updated_at = db.Column(db.DateTime, nullable=False, default=db.func.current_timestamp(), onupdate=db.func.current_timestamp());
 
     posts = db.relationship("Post", back_populates="user", lazy=True);
+    comments = db.relationship("Comment", back_populates="user", lazy=True);
 
     def __repr__(self):
         return f"<User {self.username} User ID: {self.id}>";
@@ -26,7 +27,10 @@ class User(db.Model, UserMixin):
             "email": self.email,
             "role": self.role,
             "created_at": self.created_at,
-            "updated_at": self.updated_at
+            "updated_at": self.updated_at,
+            "posts": [post.to_dict() for post in self.posts],
+            "comments": [comment.to_dict() for comment in self.comments],
+
         };
 
     
