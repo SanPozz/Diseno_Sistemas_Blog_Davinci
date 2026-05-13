@@ -1,6 +1,7 @@
-from flask_login import UserMixin, login_manager
+from flask_login import UserMixin
 
 from app.database import db
+from app.extensions import login_manager
 
 class User(db.Model, UserMixin):
     __tablename__ = "users";

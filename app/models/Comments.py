@@ -13,8 +13,8 @@ class Comment(db.Model):
 
     replies = db.relationship("Comment", backref=db.backref("father", remote_side=[id]), lazy="selectin");
 
-    user = db.relationship("User", backref="comments", lazy=True);
-    post = db.relationship("Post", backref="comments", lazy=True);
+    user = db.relationship("User", back_populates="comments", lazy=True);
+    post = db.relationship("Post", back_populates="comments", lazy=True);
 
     def __repr__(self):
         return f"<Comment ID: {self.id} User ID: {self.user_id} Post ID: {self.post_id}>";

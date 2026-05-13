@@ -1,7 +1,10 @@
-from flask import Flask
+from flask import Flask, redirect
 
 from config import DevConfig;
 from app.database import init_db;
+from app.extensions import login_manager
+
+from app.routes.posts import posts_bp
 
 def create_app():
 
@@ -9,8 +12,14 @@ def create_app():
 
     app.config.from_object(DevConfig);
 
+    login_manager.init_app(app)
+
     init_db(app);
 
-    # Importar blueprints y registrarlos
+    app.register_blueprint(posts_bp, url_prefix="/posts");
+
+    @app.route("/")
+    def index():
+        return redirect("/posts");
 
     return app;
