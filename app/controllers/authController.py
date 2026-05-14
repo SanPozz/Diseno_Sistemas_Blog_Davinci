@@ -1,5 +1,5 @@
 from flask import request, redirect, render_template
-
+from flask_login import login_user
 from flask_jwt_extended import  create_access_token
 
 from werkzeug.security import(
@@ -15,7 +15,10 @@ def register_controller():
         username = request.form["username"]
         email = request.form["email"]
         password= request.form["password"]
-        existing_user= User.query.filter_by(email=email).first()
+        existing_email= User.query.filter_by(email=email).first()
+        if existing_email:
+            return "El usuario ya existe"
+        existing_user= User.query.filter_by(username=username).first()
 
         if existing_user:
             return "El usuario ya existe"
@@ -51,12 +54,14 @@ def login_controller():
         if not valid_password:
             return "contraseña incorrecta"
         
+        login_user(user)
+
         access_token = create_access_token(identity=user.id)
 
-        return{
-            "message":"Login correcto",
-            "token":access_token
-        }
+        if user.role == "admin":
+            return redirect("/admin")
+        return redirect("/landing")
+        
     return render_template("login.html")
 
 
