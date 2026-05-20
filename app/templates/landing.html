@@ -2,150 +2,90 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Blog</title>
+
+    <title>Blog</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
 </head>
 
-<body>
+<body class="bg-gray-100">
 
-    <header>
-        <div>
-            <div>
-                <!-- Icon -->
-                <!-- Icon -->
-                <!-- Icon -->
-                <!-- Icon -->
-                <!-- Icon -->
-            </div>
-            <div>
-                <p>texto</p>
-                <a href="/logout">Cerrar sesion</a>
-            </div>
-        </div>
-        <h1>
-            Bienvenido {{current_user.username}}
+    <!-- NAVBAR -->
+
+    <nav class="bg-white shadow p-4 flex justify-between items-center">
+
+        <h1 class="text-3xl font-bold">
+
+            Blog Social
+
         </h1>
-        <p>Rol: {{current_user.role}}</p>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia quibusdam
-            nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque distinctio fugiat,
-            accusamus consequuntur.</p>
 
-        <a href="/">button to app</a>
+        <div class="flex gap-4">
 
-        <nav>
-            <div>
-                <a href="#">Home</a>
-                <a href="#">About</a>
-                <a href="#">Contact</a>
-            </div>
-            <div>
-                <img src="" alt="logo">
-                <p>title</p>
-            </div>
-            <div>
-                <a href="">Go to app</a>
-            </div>
-        </nav>
+            <a href="/posts/create" class="bg-blue-500 text-white px-4 py-2 rounded">
+                Crear publicación
+            </a>
 
-    </header>
+            <a href="/logout" class="bg-red-500 text-white px-4 py-2 rounded">
+                Logout
+            </a>
 
-    <main>
-        <div>
-            <h2>Section Title</h2>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia
-                quibusdam nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque
-                distinctio fugiat, accusamus consequuntur.</p>
         </div>
-        <div>
-            <h2>Section Title</h2>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia
-                quibusdam nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque
-                distinctio fugiat, accusamus consequuntur.</p>
-        </div>
-        <div>
-            <h2>Section Title</h2>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia
-                quibusdam nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque
-                distinctio fugiat, accusamus consequuntur.</p>
-        </div>
-    </main>
 
-    <section>
-        <div>
-            <h3>Section Subtitle</h3>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia
-                quibusdam nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque
-                distinctio fugiat, accusamus consequuntur.</p>
-        </div>
-        <div class="carrousel">
-            <div>
-                <img src="" alt="image 1">
-                <p>Image 1</p>
-            </div>
-            <div>
-                <img src="" alt="image 2">
-                <p>Image 2</p>
-            </div>
-            <div>
-                <img src="" alt="image 3">
-                <p>Image 3</p>
-            </div>
-            <div>
-                <img src="" alt="image 4">
-                <p>Image 4</p>
-            </div>
-            <div>
-                <img src="" alt="image 5">
-                <p>Image 5</p>
-            </div>
-        </div>
-    </section>
+    </nav>
 
-    <section>
-        <div>
-            <h4>Section Subtitle</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia
-                quibusdam nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque
-                distinctio fugiat, accusamus consequuntur.</p>
-            <a href="">button to app</a>
-        </div>
-    </section>
+    <!-- POSTS -->
 
-    <footer>
-        <div>
-            <div>
-                <!-- Icon -->
-                <p>Name</p>
+    <div class="max-w-7xl mx-auto mt-10 grid grid-cols-3 gap-6">
+
+        {% for post in posts %}
+
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:scale-105 transition">
+
+            <div class="p-6">
+
+                <h2 class="text-2xl font-bold">
+
+                    {{ post.title }}
+
+                </h2>
+
+                <p class="mt-4 text-gray-600">
+
+                    {{ post.content[:150] }}
+
+                </p>
+
+                <div class="mt-6 flex justify-between">
+
+                    <span class="text-sm text-gray-500">
+
+                        {{ post.user.username }}
+
+                    </span>
+
+                    <span class="text-sm text-gray-500">
+
+                        ❤️ {{ post.likes }}
+
+                    </span>
+
+                </div>
+
+                <a href="/posts/{{ post.id }}" class="mt-6 inline-block bg-black text-white px-4 py-2 rounded">
+                    Ver publicación
+                </a>
+
             </div>
-            <div>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-                <ul>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                </ul>
-                <ul>
-                    <li><a href="#">Facebook</a></li>
-                    <li><a href="#">Twitter</a></li>
-                    <li><a href="#">Instagram</a></li>
-                </ul>
-            </div>
+
         </div>
-        <div>
-            <p>&copy; 2024 My Blog. All rights reserved.</p>
-            <p>designed by</p>
-        </div>
-    </footer>
+
+        {% endfor %}
+
+    </div>
 
 </body>
 
