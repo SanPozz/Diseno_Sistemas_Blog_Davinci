@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>{{ post.title }}</title>
+</head>
+
+<body>
+
+    <a href="/landing">
+        Volver
+    </a>
+
+    <hr>
+
+    <h1>
+        {{ post.title }}
+    </h1>
+
+    <p>
+        {{ post.content }}
+    </p>
+
+    <p>
+        Autor:
+        {{ post.user.username }}
+    </p>
+
+    <p>
+        Likes:
+        {{ post.likes }}
+    </p>
+
+    <p>
+        Visitas:
+        {{ post.visitas }}
+    </p>
+    <p>
+        Categorias:
+
+        {% for category in post.categories %}
+
+        {{ category.name }}
+
+        {% endfor %}
+    </p>
+</body>
+
+</html>

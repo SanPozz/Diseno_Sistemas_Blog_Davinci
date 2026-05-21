@@ -14,11 +14,11 @@ def landing():
     return landing_controller()
 
 
-@post_bp.route("/post/create", methods=["GET", "POST"])
+@post_bp.route("/posts/create", methods=["GET", "POST"])
 def create_post():
     return create_post_controller()
 
 
-@post_bp.route("/post/<int:post_id>")
+@post_bp.route("/posts/<int:post_id>")
 def post_detail(post_id):
     return post_detail_controller(post_id)

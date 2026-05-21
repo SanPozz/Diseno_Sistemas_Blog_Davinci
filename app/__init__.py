@@ -4,7 +4,7 @@ from config import DevConfig
 from app.database import init_db
 from app.extensions import login_manager, oauth
 from app.routes.authRoutes import auth_bp
-from app.routes.postRoutes import posts_bp
+from app.routes.postRoutes import post_bp
 
 
 def create_app():
@@ -18,7 +18,7 @@ def create_app():
 
     init_db(app)
 
-    app.register_blueprint(posts_bp)
+    app.register_blueprint(post_bp)
     app.register_blueprint(auth_bp)
 
     @app.route("/")

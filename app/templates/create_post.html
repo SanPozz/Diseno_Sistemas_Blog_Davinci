@@ -2,38 +2,43 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
-
     <title>Crear Post</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
-
 </head>
 
-<body class="bg-gray-100">
+<body>
 
-    <div class="max-w-2xl mx-auto mt-10 bg-white rounded-xl shadow p-8">
+    <h1>Crear Post</h1>
 
-        <h1 class="text-3xl font-bold mb-6">
+    <form method="POST">
 
-            Crear publicación
+        <input type="text" name="title" placeholder="Titulo" required>
 
-        </h1>
+        <br><br>
 
-        <form method="POST">
+        <textarea name="content" placeholder="Contenido" required></textarea>
 
-            <input type="text" name="title" placeholder="Título" class="w-full border p-3 rounded mb-4">
+        <br><br>
 
-            <textarea name="content" placeholder="Contenido" class="w-full border p-3 rounded h-52 mb-4"></textarea>
+        <select name="category">
 
-            <button class="bg-blue-500 text-white px-6 py-3 rounded">
-                Publicar
-            </button>
+            {% for category in categories %}
 
-        </form>
+            <option value="{{ category.id }}">
+                {{ category.name }}
+            </option>
 
-    </div>
+            {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <button type="submit">
+            Crear Post
+        </button>
+
+    </form>
 
 </body>
 

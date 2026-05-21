@@ -5,87 +5,83 @@
 
     <meta charset="UTF-8">
 
-    <title>Blog</title>
-
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Landing</title>
 
 </head>
 
-<body class="bg-gray-100">
+<body>
 
-    <!-- NAVBAR -->
+    <nav>
 
-    <nav class="bg-white shadow p-4 flex justify-between items-center">
+        <h1>Blog Social</h1>
 
-        <h1 class="text-3xl font-bold">
+        <a href="/posts/create">
+            Crear publicación
+        </a>
 
-            Blog Social
+        <a href="/landing?filter=recent">
+            Recientes
+        </a>
 
-        </h1>
+        <a href="/landing?filter=popular">
+            Populares
+        </a>
 
-        <div class="flex gap-4">
+        <a href="/landing?filter=views">
+            Más vistos
+        </a>
 
-            <a href="/posts/create" class="bg-blue-500 text-white px-4 py-2 rounded">
-                Crear publicación
-            </a>
-
-            <a href="/logout" class="bg-red-500 text-white px-4 py-2 rounded">
-                Logout
-            </a>
-
-        </div>
+        <a href="/logout">
+            Logout
+        </a>
 
     </nav>
 
-    <!-- POSTS -->
+    <hr>
 
-    <div class="max-w-7xl mx-auto mt-10 grid grid-cols-3 gap-6">
+    <h2>Publicaciones</h2>
 
-        {% for post in posts %}
+    {% for post in posts %}
 
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:scale-105 transition">
+    <div>
 
-            <div class="p-6">
+        <h3>
+            {{ post.title }}
+        </h3>
 
-                <h2 class="text-2xl font-bold">
+        <p>
+            {{ post.content[:150] }}
+        </p>
 
-                    {{ post.title }}
+        <p>
+            Autor:
+            {{ post.user.username }}
+        </p>
 
-                </h2>
+        <p>
+            Likes:
+            {{ post.likes }}
+        </p>
 
-                <p class="mt-4 text-gray-600">
-
-                    {{ post.content[:150] }}
-
-                </p>
-
-                <div class="mt-6 flex justify-between">
-
-                    <span class="text-sm text-gray-500">
-
-                        {{ post.user.username }}
-
-                    </span>
-
-                    <span class="text-sm text-gray-500">
-
-                        ❤️ {{ post.likes }}
-
-                    </span>
-
-                </div>
-
-                <a href="/posts/{{ post.id }}" class="mt-6 inline-block bg-black text-white px-4 py-2 rounded">
-                    Ver publicación
-                </a>
-
-            </div>
-
-        </div>
-
-        {% endfor %}
+        <p>
+            Visitas:
+            {{ post.visitas }}
+        </p>
+        <p>
+            Categoria:
+            {% for category in post.categories %}
+            {{category.name}}
+            {% endfor %}
+        </p>
+        <a href="/posts/{{ post.id }}">
+            Ver publicación
+        </a>
 
     </div>
+
+    <hr>
+
+    {% endfor %}
 
 </body>
 
