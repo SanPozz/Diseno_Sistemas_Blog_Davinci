@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Crear Post</title>
+</head>
+
+<body>
+
+    <h1>Crear Post</h1>
+
+    <form method="POST">
+
+        <input type="text" name="title" placeholder="Titulo" required>
+
+        <br><br>
+
+        <textarea name="content" placeholder="Contenido" required></textarea>
+
+        <br><br>
+
+        <select name="category">
+
+            {% for category in categories %}
+
+            <option value="{{ category.id }}">
+                {{ category.name }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+        <br><br>
+
+        <button type="submit">
+            Crear Post
+        </button>
+
+    </form>
+
+</body>
+
+</html>

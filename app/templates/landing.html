@@ -1,135 +1,88 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Landing Blog</title>
+
+    <title>Landing</title>
+
 </head>
+
 <body>
 
-    <header>
-        <div>
-            <div>
-                <!-- Icon -->
-                <!-- Icon -->
-                <!-- Icon -->
-                <!-- Icon -->
-                <!-- Icon -->
-            </div>
-            <div>
-                <p>texto</p>
-            </div>
-        </div>
-        <h1>
-            Bienvenido a mi blog
-        </h1>
-        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia quibusdam nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque distinctio fugiat, accusamus consequuntur.</p>
+    <nav>
 
-        <a href="/">button to app</a>
+        <h1>Blog Social</h1>
 
-        <nav>
-            <div>
-                <a href="#">Home</a>
-                <a href="#">About</a>
-                <a href="#">Contact</a>
-            </div>
-            <div>
-                <img src="" alt="logo">
-                <p>title</p>
-            </div>
-            <div>
-                <a href="">Go to app</a>
-            </div>
-        </nav>
+        <a href="/posts/create">
+            Crear publicación
+        </a>
 
-    </header>
+        <a href="/landing?filter=recent">
+            Recientes
+        </a>
 
-    <main>
-        <div>
-            <h2>Section Title</h2>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia quibusdam nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque distinctio fugiat, accusamus consequuntur.</p>
-        </div>
-        <div>
-            <h2>Section Title</h2>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia quibusdam nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque distinctio fugiat, accusamus consequuntur.</p>
-        </div>
-        <div>
-            <h2>Section Title</h2>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia quibusdam nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque distinctio fugiat, accusamus consequuntur.</p>
-        </div>
-    </main>
+        <a href="/landing?filter=popular">
+            Populares
+        </a>
 
-    <section>
-        <div>
-            <h3>Section Subtitle</h3>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia quibusdam nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque distinctio fugiat, accusamus consequuntur.</p>
-        </div>
-        <div class="carrousel">
-            <div>
-                <img src="" alt="image 1">
-                <p>Image 1</p>
-            </div>
-            <div>
-                <img src="" alt="image 2">
-                <p>Image 2</p>
-            </div>
-            <div>
-                <img src="" alt="image 3">
-                <p>Image 3</p>
-            </div>
-            <div>
-                <img src="" alt="image 4">
-                <p>Image 4</p>
-            </div>
-            <div>
-                <img src="" alt="image 5">
-                <p>Image 5</p>
-            </div>
-        </div>
-    </section>
+        <a href="/landing?filter=views">
+            Más vistos
+        </a>
 
-    <section>
-        <div>
-            <h4>Section Subtitle</h4>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum dignissimos reprehenderit, mollitia quibusdam nostrum aut amet fugiat unde harum eaque. Maiores atque cumque tenetur quibusdam itaque distinctio fugiat, accusamus consequuntur.</p>
-            <a href="">button to app</a>
-        </div>
-    </section>
+        <a href="/logout">
+            Logout
+        </a>
 
-    <footer>
-        <div>
-            <div>
-                <!-- Icon -->
-                <p>Name</p>
-            </div>
-            <div>
-                <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">About</a></li>
-                    <li><a href="#">Contact</a></li>
-                </ul>
-                <ul>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                    <li><a href="#"></a></li>
-                </ul>
-                <ul>
-                    <li><a href="#">Facebook</a></li>
-                    <li><a href="#">Twitter</a></li>
-                    <li><a href="#">Instagram</a></li>
-                </ul>
-            </div>
-        </div>
-        <div>
-            <p>&copy; 2024 My Blog. All rights reserved.</p>
-            <p>designed by</p>
-        </div>
-    </footer>
-    
+    </nav>
+
+    <hr>
+
+    <h2>Publicaciones</h2>
+
+    {% for post in posts %}
+
+    <div>
+
+        <h3>
+            {{ post.title }}
+        </h3>
+
+        <p>
+            {{ post.content[:150] }}
+        </p>
+
+        <p>
+            Autor:
+            {{ post.user.username }}
+        </p>
+
+        <p>
+            Likes:
+            {{ post.likes }}
+        </p>
+
+        <p>
+            Visitas:
+            {{ post.visitas }}
+        </p>
+        <p>
+            Categoria:
+            {% for category in post.categories %}
+            {{category.name}}
+            {% endfor %}
+        </p>
+        <a href="/posts/{{ post.id }}">
+            Ver publicación
+        </a>
+
+    </div>
+
+    <hr>
+
+    {% endfor %}
+
 </body>
+
 </html>
