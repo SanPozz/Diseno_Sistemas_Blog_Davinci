@@ -51,7 +51,7 @@ def create_post_controller():
 
         db.session.commit()
 
-        return redirect("/landing")
+        return redirect("/home")
 
     categories = Category.query.all()
     return render_template("create_post.html", categories=categories)
