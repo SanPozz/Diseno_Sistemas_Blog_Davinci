@@ -13,22 +13,17 @@ def register_controller():
         username = request.form["username"]
         email = request.form["email"]
         password = request.form["password"]
-        existing_email = User.query.filter_by(email=email).first()
-        if existing_email:
-            return "El usuario ya existe"
-        existing_user = User.query.filter_by(username=username).first()
 
-        if existing_user:
-            return "El usuario ya existe"
-        hashed_password = generate_password_hash(password)
+        RESULT_REGISTER = AuthService.register(username, email, password)
 
-        new_user = User(username=username, email=email, hashed_password=hashed_password)
+        error_message = RESULT_REGISTER[1]
+        user = RESULT_REGISTER[0]
 
-        db.session.add(new_user)
-
-        db.session.commit()
-
-        return redirect("/login")
+        if error_message:
+            return redirect(f"/register?error=true&message={error_message}")
+        
+        if user:
+            return redirect("/login?registered=true&error=false")
     return render_template("register.html")
 
 
@@ -36,19 +31,21 @@ def login_controller():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        user = User.query.filter_by(username=username).first()
 
-        if not user:
-            return "Usuario no encontrado"
+        RESULT_LOGIN = AuthService.login(username, password)
 
-        valid_password = check_password_hash(user.hashed_password, password)
+        error_message = RESULT_LOGIN[1]
+        user = RESULT_LOGIN[0]
 
-        if not valid_password:
-            return "contraseña incorrecta"
+        if error_message:
+            return redirect(f"/login?error=true&message={error_message}")
 
-        login_user(user)
+        if user:
+            login_user(user)
 
-        access_token = create_access_token(identity=user.id)
+        # access_token = create_access_token(identity=user.id)
+
+        # TODO: Implementar JSON WEB TOKEN con cookies y utilizar @jwt_required en rutas protegidas
 
         if user.role == "admin":
             return redirect("/admin")

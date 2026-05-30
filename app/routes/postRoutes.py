@@ -1,5 +1,6 @@
 from flask import Blueprint
 
+
 from app.controllers.postController import (
     landing_controller,
     create_post_controller,

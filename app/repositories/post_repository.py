@@ -15,6 +15,7 @@ class PostRepository:
     def create(post):
         db.session.add(post)
         db.session.commit()
+        return post
 
     @staticmethod
     def get_all():
