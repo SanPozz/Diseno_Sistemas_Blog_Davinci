@@ -8,6 +8,13 @@ from app.strategies.RecentPostsStrategy import RecentPostsStrategy
 from app.strategies.PopularPostsStrategy import PopularPostsStrategy
 from app.strategies.MostViewedPostsStrategy import MostViewedPostsStrategy
 
+from app.services.posts_service import PostsService
+
+from app.repositories.post_repository import PostRepository
+from app.repositories.categories_repository import CategoryRepository
+
+posts_service = PostsService(PostRepository, CategoryRepository)
+
 
 # Landing controller
 def landing_controller():
@@ -15,20 +22,13 @@ def landing_controller():
     # es un filtro dinamico que cambia segun la estrategia
     filter_type = request.args.get("filter", "recent")
 
-    # esta es la estrategia por defecto
-    strategy = RecentPostsStrategy()
+    RESULT_SERVICE = posts_service.get_posts_by_strategy(filter_type)
 
-    # aca se puede cambiar la estratigai si queres ver lo "popular" o lo "mas visto"
-    if filter_type == "popular":
+    posts = RESULT_SERVICE[0]
+    error = RESULT_SERVICE[1]
 
-        strategy = PopularPostsStrategy()
-
-    elif filter_type == "views":
-
-        strategy = MostViewedPostsStrategy()
-
-    # cada estrategia devuelve un post distinto
-    posts = strategy.get_posts()
+    if error:
+        return render_template("landing.html", error=error)
 
     return render_template("landing.html", posts=posts)
 
@@ -42,29 +42,40 @@ def create_post_controller():
         title = escape(request.form["title"])
         content = escape(request.form["content"])
         category_id = request.form["category"]
-        category = Category.query.get(category_id)
 
-        post = Post(title=title, content=content, userId=current_user.id)
+        post_data = {
+            "title": title,
+            "content": content,
+            "user_id": current_user.id,
+            "category_id": category_id
+        }
 
-        post.categories.append(category)
-        db.session.add(post)
+        RESULT_SERVICE = posts_service.create_post(post_data)
 
-        db.session.commit()
+        post = RESULT_SERVICE[0]
+        error = RESULT_SERVICE[1]
 
-        return redirect("/home")
+        if post:
+            return redirect(f"/posts/{post.id}")
+        
+        if error:
+            return render_template("create_post.html", error=error)
+        
+        return render_template("create_post.html", error="Error desconocido al crear el post.")
 
-    categories = Category.query.all()
+    categories = CategoryRepository.get_all()
     return render_template("create_post.html", categories=categories)
 
 
 # ver un post
 def post_detail_controller(post_id):
 
-    post = Post.query.get_or_404(post_id)
+    RESULT_SERVICE = posts_service.get_post_by_id(post_id)
 
-    # sumamos una visita
-    post.visitas += 1
+    post = RESULT_SERVICE[0]
+    error = RESULT_SERVICE[1]
 
-    db.session.commit()
+    if error:
+        return render_template("post_detail.html", error=error)
 
     return render_template("post_detail.html", post=post)
