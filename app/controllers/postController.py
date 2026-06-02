@@ -1,4 +1,4 @@
-from flask import render_template, request, redirect
+from flask import render_template, request, redirect, jsonify
 from flask_login import current_user, login_required
 from markupsafe import escape
 from app.database import db
@@ -79,3 +79,43 @@ def post_detail_controller(post_id):
         return render_template("post_detail.html", error=error)
 
     return render_template("post_detail.html", post=post)
+
+# Like a un post
+@login_required
+def add_like_controller(post_id):
+
+    RESULT_SERVICE = posts_service.add_like(post_id)
+
+    post = RESULT_SERVICE[0]
+    error = RESULT_SERVICE[1]
+
+    if error:
+        return jsonify({"error": error}), 404
+
+    return jsonify({
+        "message": "Like agregado",
+        "likes": post.likes
+    }), 200
+
+# Comentar un post
+@login_required
+def add_comment_controller(post_id):
+
+    text = request.form["text"]
+
+    RESULT_SERVICE = posts_service.add_comment(
+        post_id,
+        current_user.id,
+        text
+    )
+
+    comment = RESULT_SERVICE[0]
+    error = RESULT_SERVICE[1]
+
+    if error:
+        return jsonify({"error": error}), 404
+
+    return jsonify({
+        "message": "Comentario agregado",
+        "comment": comment.to_dict()
+    }), 201
