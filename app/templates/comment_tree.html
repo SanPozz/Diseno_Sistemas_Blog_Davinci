@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <strong>{{ comment.user }}</strong>
+
+    <p>{{ comment.text }}</p>
+
+    {% if current_user.is_authenticated %}
+
+    <form action="/posts/{{ post.id }}/comment" method="POST">
+
+        <input type="hidden" name="father_id" value="{{ comment.id }}">
+
+        <textarea name="text" rows="2" cols="40" required>
+    </textarea>
+
+        <br>
+
+        <button type="submit">
+            Responder
+        </button>
+
+    </form>
+
+    {% endif %}
+
+    {% if comment.replies %}
+
+    {% for comment in comment.replies %}
+
+    {% include "comment_tree.html" %}
+
+    {% endfor %}
+
+    {% endif %}
+
+    <hr>
+</body>
+
+</html>

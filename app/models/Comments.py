@@ -8,14 +8,16 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     post_id = db.Column(db.Integer, db.ForeignKey("posts.id"), nullable=False)
+    # composite padre que permite que un comentario apunte a otro
     father_id = db.Column(db.Integer, db.ForeignKey("comments.id"), nullable=True)
+    # composite hijos para obtener automaticamente los comentarios hijos
+    children = db.relationship(
+        "Comment", backref=db.backref("parent", remote_side=[id]), lazy="selectin"
+    )
+
     text = db.Column(db.Text, nullable=False)
     created_at = db.Column(
         db.DateTime, nullable=False, default=db.func.current_timestamp()
-    )
-
-    replies = db.relationship(
-        "Comment", backref=db.backref("father", remote_side=[id]), lazy="selectin"
     )
 
     user = db.relationship("User", back_populates="comments", lazy=True)

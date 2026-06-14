@@ -47,7 +47,7 @@ def create_post_controller():
             "title": title,
             "content": content,
             "user_id": current_user.id,
-            "category_id": category_id
+            "category_id": category_id,
         }
 
         RESULT_SERVICE = posts_service.create_post(post_data)
@@ -57,11 +57,13 @@ def create_post_controller():
 
         if post:
             return redirect(f"/posts/{post.id}")
-        
+
         if error:
             return render_template("create_post.html", error=error)
-        
-        return render_template("create_post.html", error="Error desconocido al crear el post.")
+
+        return render_template(
+            "create_post.html", error="Error desconocido al crear el post."
+        )
 
     categories = CategoryRepository.get_all()
     return render_template("create_post.html", categories=categories)
@@ -72,13 +74,16 @@ def post_detail_controller(post_id):
 
     RESULT_SERVICE = posts_service.get_post_by_id(post_id)
 
-    post = RESULT_SERVICE[0]
+    data = RESULT_SERVICE[0]
     error = RESULT_SERVICE[1]
 
     if error:
         return render_template("post_detail.html", error=error)
 
-    return render_template("post_detail.html", post=post)
+    return render_template(
+        "post_detail.html", post=data["post"], comments_tree=data["comments_tree"]
+    )
+
 
 # Like a un post
 @login_required
@@ -92,10 +97,8 @@ def add_like_controller(post_id):
     if error:
         return jsonify({"error": error}), 404
 
-    return jsonify({
-        "message": "Like agregado",
-        "likes": post.likes
-    }), 200
+    return jsonify({"message": "Like agregado", "likes": post.likes}), 200
+
 
 # Comentar un post
 @login_required
@@ -103,10 +106,15 @@ def add_comment_controller(post_id):
 
     text = request.form["text"]
 
+    father_id = request.form.get("father_id")
+
+    if father_id:
+        father_id = int(father_id)
+    else:
+        father_id = None
+
     RESULT_SERVICE = posts_service.add_comment(
-        post_id,
-        current_user.id,
-        text
+        post_id, current_user.id, text, father_id
     )
 
     comment = RESULT_SERVICE[0]
@@ -115,7 +123,4 @@ def add_comment_controller(post_id):
     if error:
         return jsonify({"error": error}), 404
 
-    return jsonify({
-        "message": "Comentario agregado",
-        "comment": comment.to_dict()
-    }), 201
+    return redirect(f"/posts/{post_id}")

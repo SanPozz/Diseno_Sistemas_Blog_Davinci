@@ -1,10 +1,12 @@
+from requests import post
+
 from app.models.Posts import Post
 from app.models.Comments import Comment
 
 from app.strategies.MostViewedPostsStrategy import MostViewedPostsStrategy
 from app.strategies.PopularPostsStrategy import PopularPostsStrategy
 from app.strategies.RecentPostsStrategy import RecentPostsStrategy
-
+from app.services.comment_builder import build_comment_tree
 from app.subjects.PostSubject import PostSubject
 from app.observers.NotificationObserver import NotificationObserver
 
@@ -37,21 +39,35 @@ class PostsService:
 
         db.session.commit()
 
-        return post, None
+        # patron composite
 
+        comments_tree = []
+
+        root_comments = [
+            comment for comment in post.comments if comment.father_id is None
+        ]
+
+        for comment in root_comments:
+            tree = build_comment_tree(comment)
+            comments_tree.append(tree.display())
+
+        return {
+            "post": post,
+            "comments_tree": comments_tree,
+        }, None
+
+    # crear post
     def create_post(self, post_data):
 
-        category = self.category_repository.get_by_id(
-            post_data['category_id']
-        )
+        category = self.category_repository.get_by_id(post_data["category_id"])
 
         if not category:
             return None, "Categoría no encontrada"
 
         post = Post(
-            title=post_data['title'],
-            content=post_data['content'],
-            userId=post_data['user_id']
+            title=post_data["title"],
+            content=post_data["content"],
+            userId=post_data["user_id"],
         )
 
         if not post:
@@ -121,15 +137,12 @@ class PostsService:
         db.session.commit()
 
         # Notificar observers
-        self.post_subject.notify({
-            "event": "like",
-            "post": post
-        })
+        self.post_subject.notify({"event": "like", "post": post})
 
         return post, None
 
     # Patron Observer
-    def add_comment(self, post_id, user_id, text):
+    def add_comment(self, post_id, user_id, text, father_id=None):
 
         post = self.posts_repository.get_by_id(post_id)
 
@@ -137,18 +150,15 @@ class PostsService:
             return None, "Post no encontrado"
 
         comment = Comment(
-            user_id=user_id,
-            post_id=post_id,
-            text=text
+            user_id=user_id, post_id=post_id, text=text, father_id=father_id
         )
 
         db.session.add(comment)
         db.session.commit()
 
+        event_type = "reply" if father_id is not None else "comment"
         # Notificar observers
-        self.post_subject.notify({
-            "event": "comment",
-            "post": post
-        })
-
+        self.post_subject.notify(
+            {"event": event_type, "post": post, "comment": comment}
+        )
         return comment, None
