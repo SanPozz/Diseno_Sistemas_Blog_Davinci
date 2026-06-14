@@ -1,88 +1,185 @@
 <!DOCTYPE html>
-<html lang="es">
-
+<html lang="en">
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Landing Blog</title>
 
-    <title>Landing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+     <style type="text/tailwindcss">
+        @theme {
+            --color-primary: #FFFFFF;
+            --color-secondary: #0F172A;
+            --color-accent: #3B82F6;
+            --color-shade: #EEF2F6;
+        }
+
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(calc(-8 * (384px + 24px)));
+            }
+        }
+
+        .carousel-scroll {
+            animation: scroll 60s linear infinite;
+        }
+
+        .carousel-scroll:hover {
+            animation-play-state: paused;
+        }
+
+    </style>
 </head>
-
 <body>
 
-    <nav>
+    {% from 'partials/feature_card.html' import feature_card %}
+    {% from 'partials/post_card.html' import post_card %}
 
-        <h1>Blog Social</h1>
+    <nav class="w-full h-[10vh] bg-primary flex items-center justify-between px-4">
+        <div>
+            <span class="text-xl antialiased font-semibold font-['Plus_Jakarta_Sans']">Blog</span>
+        </div>
 
-        <a href="/posts/create">
-            Crear publicación
-        </a>
-
-        <a href="/landing?filter=recent">
-            Recientes
-        </a>
-
-        <a href="/landing?filter=popular">
-            Populares
-        </a>
-
-        <a href="/landing?filter=views">
-            Más vistos
-        </a>
-
-        <a href="/logout">
-            Logout
-        </a>
-
+        <div class="flex items-center gap-4">
+            <a href="">Iniciar Sesion</a>
+            <a href="">Registrarse</a>
+            <a href="" class="bg-[var(--color-secondary)] px-5 py-2 text-[var(--color-primary)] rounded-full">Ir al Blog</a>
+        </div>
     </nav>
 
-    <hr>
+    <hr class="border-[var(--color-accent)]">
 
-    <h2>Publicaciones</h2>
+    <main class=" flex flex-col gap-8 items-center justify-center">
+        <div class="pt-15 flex flex-col w-[60%]">
+            <h1 class="text-4xl font-bold antialiased font-['Plus_Jakarta_Sans'] text-center whitespace-pre-line leading-tight">
+                El espacio para expresar tus ideas. Escribi, compartí y conectá con miles de lectores.
+            </h1>
+            <p class="w-auto font-['Plus_Jakarta_Sans'] text-center text-lg text-[var(--color-secondary)] whitespace-pre-line leading-relaxed">
+                Plataforma abierta y libre para <span class="font-semibold text-[var(--color-accent)] underline decoration-2 underline-offset-4">escritores, pensadores</span>
+                y <span class="font-semibold text-[var(--color-accent)] underline decoration-2 underline-offset-4">creadores de contenido</span>
+            </p>
+        </div>
 
-    {% for post in posts %}
+        <a href="" class="px-6 py-3 bg-[var(--color-accent)] text-[var(--color-primary)] rounded-full font-['Plus_Jakarta_Sans'] text-bold">Comenzar ahora</a>
 
-    <div>
+        <div class="flex items-center justify-center gap-8 w-full">
+            
+            <div class="w-[70%] h-[70vh] overflow-hidden rounded-2xl bg-white/30 border border-[var(--color-accent)]/20 shadow-[0_5px_15px_-2px_var(--color-accent)] backdrop-blur-md">
+                
+                
+                <div class="flex items-center px-4 py-3 bg-white/40 border-b border-white/20 border-b-2 border-b-[var(--color-accent)]/30">
 
-        <h3>
-            {{ post.title }}
-        </h3>
+                    <div class="flex space-x-2">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                
+                    <div class="flex-1 pr-10 text-center text-sm font-medium text-slate-800">
+                        Blog
+                    </div>
+                </div>
+                
+                
+                <div class=" bg-slate-50/80 text-slate-800 h-full overflow-auto">
+                    <img src="{{ url_for('static', filename='images/blog-ui.jpg') }}" alt="Screenshot de la app" class="w-full h-full rounded">
+                </div>
+                
+            </div>
+            
+        </div>
 
-        <p>
-            {{ post.content[:150] }}
-        </p>
+    </main>
 
-        <p>
-            Autor:
-            {{ post.user.username }}
-        </p>
+    <section class="hero-gradient pt-20 pb-5 py-50 flex justify-center">
+        <div class="grid grid-cols-2 gap-8 place-items-center">
 
-        <p>
-            Likes:
-            {{ post.likes }}
-        </p>
+        {{ feature_card('icon-editor.svg', 'Editor intuitivo', 'Escribe y formatea tus publicaciones con facilidad utilizando nuestro editor intuitivo. Agrega imágenes, enlaces y formato para hacer que tus ideas cobren vida.') }}
 
-        <p>
-            Visitas:
-            {{ post.visitas }}
-        </p>
-        <p>
-            Categoria:
-            {% for category in post.categories %}
-            {{category.name}}
-            {% endfor %}
-        </p>
-        <a href="/posts/{{ post.id }}">
-            Ver publicación
-        </a>
+        {{ feature_card('icon-community.svg', 'Conexión con lectores', 'Conecta con una comunidad de lectores apasionados. Comparte tus publicaciones, recibe comentarios y construye una audiencia leal que valore tu contenido.') }}
 
-    </div>
+        {{ feature_card('icon-customization.svg', 'Personalización de tu espacio', 'Personaliza tu perfil y tus publicaciones para reflejar tu estilo único. Agrega una foto de perfil, una biografía y elige un diseño que se adapte a tu personalidad.') }}
 
-    <hr>
+        {{ feature_card('icon-access.svg', 'Acceso desde cualquier lugar', 'Accede a tu cuenta y publica desde cualquier dispositivo con conexión a internet. Ya sea desde tu computadora, tablet o smartphone, siempre tendrás acceso a tu espacio de escritura.') }}
+        </div>
+    </section>
 
-    {% endfor %}
+    <section class="hero-gradient-reverse px-20 py-50 flex justify-center overflow-hidden">
+        <div class="w-full">
+            <div class="mb-12 text-center">
+                <h2 class="text-4xl font-semibold text-[var(--color-secondary)] mb-4">Posts Destacados</h2>
+                <p class="text-lg text-[var(--color-secondary)]/70">Descubre las historias más leídas de nuestra comunidad</p>
+            </div>
+            <div class="flex gap-6 carousel-scroll">
+                {{ post_card('avatar1.jpg', 'Juan Pérez', 'Tecnología', '10 Consejos para mejorar tu productividad', 'Descubre cómo maximizar tu tiempo y ser más eficiente en tus tareas diarias...') }}
+                {{ post_card('avatar2.jpg', 'María García', 'Diseño', 'Tendencias de diseño 2024', 'Las nuevas tendencias que están revolucionando el mundo del diseño web...') }}
+                {{ post_card('avatar3.jpg', 'Carlos López', 'Desarrollo', 'React vs Vue: comparación completa', 'Análisis detallado de dos de los frameworks más populares en la actualidad...') }}
+                {{ post_card('avatar4.jpg', 'Ana Rodríguez', 'Marketing', 'Estrategia de contenido que funciona', 'Cómo crear una estrategia de contenido que realmente convierte visitantes...') }}
+                {{ post_card('avatar1.jpg', 'Luis Martín', 'Negocios', 'Cómo escalar tu startup', 'Estrategias probadas para llevar tu startup al siguiente nivel...') }}
+                {{ post_card('avatar2.jpg', 'Sofia Chen', 'UX', 'El futuro de la experiencia del usuario', 'Exploramos cómo la IA está cambiando el diseño UX...') }}
+                {{ post_card('avatar3.jpg', 'Marco Rossi', 'Backend', 'Microservicios en producción', 'Guía completa para implementar arquitectura de microservicios...') }}
+                {{ post_card('avatar4.jpg', 'Elena Pérez', 'DevOps', 'CI/CD pipelines modernos', 'Automatiza tus despliegues con las mejores prácticas de CI/CD...') }}
+                <!-- Duplicados para efecto infinito -->
+                {{ post_card('avatar1.jpg', 'Juan Pérez', 'Tecnología', '10 Consejos para mejorar tu productividad', 'Descubre cómo maximizar tu tiempo y ser más eficiente en tus tareas diarias...') }}
+                {{ post_card('avatar2.jpg', 'María García', 'Diseño', 'Tendencias de diseño 2024', 'Las nuevas tendencias que están revolucionando el mundo del diseño web...') }}
+                {{ post_card('avatar3.jpg', 'Carlos López', 'Desarrollo', 'React vs Vue: comparación completa', 'Análisis detallado de dos de los frameworks más populares en la actualidad...') }}
+                {{ post_card('avatar4.jpg', 'Ana Rodríguez', 'Marketing', 'Estrategia de contenido que funciona', 'Cómo crear una estrategia de contenido que realmente convierte visitantes...') }}
+                {{ post_card('avatar1.jpg', 'Luis Martín', 'Negocios', 'Cómo escalar tu startup', 'Estrategias probadas para llevar tu startup al siguiente nivel...') }}
+                {{ post_card('avatar2.jpg', 'Sofia Chen', 'UX', 'El futuro de la experiencia del usuario', 'Exploramos cómo la IA está cambiando el diseño UX...') }}
+                {{ post_card('avatar3.jpg', 'Marco Rossi', 'Backend', 'Microservicios en producción', 'Guía completa para implementar arquitectura de microservicios...') }}
+                {{ post_card('avatar4.jpg', 'Elena Pérez', 'DevOps', 'CI/CD pipelines modernos', 'Automatiza tus despliegues con las mejores prácticas de CI/CD...') }}
+            </div>
+        </div>
+    </section>
 
+    <section class="hero-gradient px-20 py-40 flex flex-col items-center justify-center relative">
+        
+        <div class="relative z-10 text-center max-w-2xl">
+            <h2 class="text-4xl font-bold text-[var(--color-secondary)] mb-6">Únete a nuestra <span class="text-[var(--color-accent)]">comunidad</span> de escritores</h2>
+            <p class="text-lg text-[var(--color-secondary)]/70 mb-8">Comienza a compartir tus ideas hoy y conecta con miles de lectores apasionados en nuestra plataforma</p>
+            <a href="" class="px-6 py-4 bg-[var(--color-accent)] text-[var(--color-primary)] rounded-full font-['Plus_Jakarta_Sans'] text-bold">Comenzar ahora</a>
+        </div>
+    </section>
+
+    <footer class="bg-[var(--color-secondary)] text-[var(--color-primary)] py-12 px-20">
+        <div class="max-w-7xl mx-auto grid grid-cols-3 gap-12 mb-8">
+            
+            <div class="flex flex-col gap-3">
+                <h3 class="text-2xl font-bold font-['Plus_Jakarta_Sans']">Blog</h3>
+                <p class="text-[var(--color-primary)]/70 text-sm">La plataforma de escritores más grande.</p>
+            </div>
+            
+            
+            <div class="flex flex-col gap-3">
+                <h4 class="font-semibold">Enlaces</h4>
+                <ul class="space-y-2 text-[var(--color-primary)]/70 text-sm">
+                    <li><a href="" class="hover:text-[var(--color-accent)] transition-colors">Acerca de</a></li>
+                    <li><a href="" class="hover:text-[var(--color-accent)] transition-colors">Privacidad</a></li>
+                </ul>
+            </div>
+            
+            
+            <div class="flex flex-col gap-3">
+                <h4 class="font-semibold">Redes</h4>
+                <div class="flex gap-4 text-sm">
+                    <a href="" class="text-[var(--color-primary)]/70 hover:text-[var(--color-accent)] transition-colors">Twitter</a>
+                    <a href="" class="text-[var(--color-primary)]/70 hover:text-[var(--color-accent)] transition-colors">GitHub</a>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="border-t border-[var(--color-primary)]/10 pt-6">
+            <p class="text-[var(--color-primary)]/70 text-sm">&copy; 2026 Blog. Todos los derechos reservados.</p>
+        </div>
+    </footer>
 </body>
-
 </html>

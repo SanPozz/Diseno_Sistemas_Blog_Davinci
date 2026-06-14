@@ -1,6 +1,6 @@
 from flask import request, redirect, render_template
 from flask_login import login_user
-from flask_jwt_extended import create_access_token
+# from flask_jwt_extended import create_access_token
 from app.services.auth_service import AuthService
 from werkzeug.security import generate_password_hash, check_password_hash
 

@@ -1,4 +1,5 @@
 from flask import Flask, redirect
+import os
 
 from config import DevConfig
 from app.database import init_db
@@ -9,7 +10,11 @@ from app.routes.postRoutes import post_bp
 
 def create_app():
 
-    app = Flask(__name__)
+    app = Flask(
+        __name__,
+        static_folder=os.path.join(os.path.dirname(__file__), 'static'),
+        static_url_path='/static'
+    )
 
     app.config.from_object(DevConfig)
 
