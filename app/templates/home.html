@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Landing</title>
+
+</head>
+
+<body>
+
+    <nav>
+
+        <h1>Blog Social</h1>
+
+        <a href="/posts/create">
+            Crear publicación
+        </a>
+
+        <a href="/landing?filter=recent">
+            Recientes
+        </a>
+
+        <a href="/landing?filter=popular">
+            Populares
+        </a>
+
+        <a href="/landing?filter=views">
+            Más vistos
+        </a>
+
+        <a href="/logout">
+            Logout
+        </a>
+
+    </nav>
+
+    <hr>
+
+    <h2>Publicaciones</h2>
+
+    {% for post in posts %}
+
+    <div>
+
+        <h3>
+            {{ post.title }}
+        </h3>
+
+        <p>
+            {{ post.content[:150] }}
+        </p>
+
+        <p>
+            Autor:
+            {{ post.user.username }}
+        </p>
+
+        <p>
+            Likes:
+            {{ post.likes }}
+        </p>
+
+        <p>
+            Visitas:
+            {{ post.visitas }}
+        </p>
+        <p>
+            Categoria:
+            {% for category in post.categories %}
+            {{category.name}}
+            {% endfor %}
+        </p>
+        <a href="/posts/{{ post.id }}">
+            Ver publicación
+        </a>
+
+    </div>
+
+    <hr>
+
+    {% endfor %}
+
+</body>
+
+</html>
