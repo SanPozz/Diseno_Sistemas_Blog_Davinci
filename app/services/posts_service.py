@@ -3,6 +3,8 @@ from requests import post
 from app.models.Posts import Post
 from app.models.Comments import Comment
 
+from app.models.Users import User
+from app.models.Users import User
 from app.strategies.MostViewedPostsStrategy import MostViewedPostsStrategy
 from app.strategies.PopularPostsStrategy import PopularPostsStrategy
 from app.strategies.RecentPostsStrategy import RecentPostsStrategy
@@ -125,30 +127,26 @@ class PostsService:
                 return None, "No hay posts recientes disponibles."
 
     # Patron Observer
-    def add_like(self, post_id):
 
+    def add_like(self, post_id, user_id):
         post = self.posts_repository.get_by_id(post_id)
-
         if not post:
             return None, "Post no encontrado"
-
+        actor = User.query.get(user_id)
         post.likes += 1
-
         db.session.commit()
-
-        # Notificar observers
-        self.post_subject.notify({"event": "like", "post": post})
+        # Notificar al observers
+        self.post_subject.notify({"event": "like", "post": post, "actor": actor})
 
         return post, None
 
     # Patron Observer
+
     def add_comment(self, post_id, user_id, text, father_id=None):
-
         post = self.posts_repository.get_by_id(post_id)
-
         if not post:
             return None, "Post no encontrado"
-
+        actor = User.query.get(user_id)
         comment = Comment(
             user_id=user_id, post_id=post_id, text=text, father_id=father_id
         )
@@ -156,9 +154,19 @@ class PostsService:
         db.session.add(comment)
         db.session.commit()
 
-        event_type = "reply" if father_id is not None else "comment"
-        # Notificar observers
-        self.post_subject.notify(
-            {"event": event_type, "post": post, "comment": comment}
-        )
+        if father_id is not None:
+            parent_comment = Comment.query.get(father_id)
+            self.post_subject.notify(
+                {
+                    "event": "reply",
+                    "post": post,
+                    "comment": comment,
+                    "parent_comment": parent_comment,
+                    "actor": actor,
+                }
+            )
+        else:
+            self.post_subject.notify(
+                {"event": "comment", "post": post, "comment": comment, "actor": actor}
+            )
         return comment, None

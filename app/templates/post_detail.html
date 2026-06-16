@@ -32,35 +32,35 @@
         {{ post.likes }}
     </p>
 
+
+
     <p>
         Visitas:
         {{ post.visitas }}
     </p>
+    {% if current_user.is_authenticated %}
+    <form action="/posts/{{ post.id }}/like" method="POST">
+        <button type="submit">
+            Dar Like
+        </button>
+    </form>
+    {% endif %}
 
     <p>
         Categorias:
-
         {% for category in post.categories %}
-
         {{ category.name }}
-
         {% endfor %}
     </p>
 
     <hr>
 
     <h2>Comentarios</h2>
-
     {% if comments_tree %}
-
     {% for comment in comments_tree %}
-
     {% include "comment_tree.html" %}
-
     {% endfor %}
-
     {% else %}
-
     <p>No hay comentarios todavía.</p>
 
     {% endif %}
@@ -72,16 +72,12 @@
     {% if current_user.is_authenticated %}
 
     <form action="/posts/{{ post.id }}/comment" method="POST">
-
         <textarea name="text" rows="4" cols="50" required>
         </textarea>
-
         <br><br>
-
         <button type="submit">
             Comentar
         </button>
-
     </form>
 
     {% else %}

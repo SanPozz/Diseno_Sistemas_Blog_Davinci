@@ -12,6 +12,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String(120), unique=True, nullable=False)
     hashed_password = db.Column(db.String(128), nullable=False)
     role = db.Column(db.String(20), nullable=False, default="user")
+    notifications = db.relationship("Notification", back_populates="user", lazy=True)
 
     created_at = db.Column(
         db.DateTime, nullable=False, default=db.func.current_timestamp()

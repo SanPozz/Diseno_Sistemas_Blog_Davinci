@@ -7,9 +7,8 @@ from app.models.Categories import Category
 from app.strategies.RecentPostsStrategy import RecentPostsStrategy
 from app.strategies.PopularPostsStrategy import PopularPostsStrategy
 from app.strategies.MostViewedPostsStrategy import MostViewedPostsStrategy
-
+from app.models.Notification import Notification
 from app.services.posts_service import PostsService
-
 from app.repositories.post_repository import PostRepository
 from app.repositories.categories_repository import CategoryRepository
 
@@ -17,6 +16,7 @@ posts_service = PostsService(PostRepository, CategoryRepository)
 
 
 # Landing controller
+@login_required
 def landing_controller():
 
     # es un filtro dinamico que cambia segun la estrategia
@@ -29,8 +29,13 @@ def landing_controller():
 
     if error:
         return render_template("landing.html", error=error)
+    unread_notifications = Notification.query.filter_by(
+        user_id=current_user.id, is_read=False
+    ).count()
 
-    return render_template("landing.html", posts=posts)
+    return render_template(
+        "landing.html", posts=posts, unread_notifications=unread_notifications
+    )
 
 
 # creacion de un post
@@ -89,7 +94,7 @@ def post_detail_controller(post_id):
 @login_required
 def add_like_controller(post_id):
 
-    RESULT_SERVICE = posts_service.add_like(post_id)
+    RESULT_SERVICE = posts_service.add_like(post_id, current_user.id)
 
     post = RESULT_SERVICE[0]
     error = RESULT_SERVICE[1]
@@ -97,7 +102,7 @@ def add_like_controller(post_id):
     if error:
         return jsonify({"error": error}), 404
 
-    return jsonify({"message": "Like agregado", "likes": post.likes}), 200
+    return redirect(f"/posts/{post_id}")
 
 
 # Comentar un post
@@ -124,3 +129,14 @@ def add_comment_controller(post_id):
         return jsonify({"error": error}), 404
 
     return redirect(f"/posts/{post_id}")
+
+
+@login_required
+def notifications_controller():
+
+    notifications = (
+        Notification.query.filter_by(user_id=current_user.id)
+        .order_by(Notification.created_at.desc())
+        .all()
+    )
+    return render_template("notifications.html", notifications=notifications)

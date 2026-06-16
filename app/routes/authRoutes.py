@@ -8,6 +8,7 @@ from app.controllers.authController import login_controller, register_controller
 from flask_login import login_user
 from app.models.Users import User
 from app.database import db
+from app.models.Notification import Notification
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -89,3 +90,14 @@ def google_callback():
         return redirect("/admin")
 
     return redirect("/landing")
+
+
+@auth_bp.route("/notifications")
+@login_required
+def notifications():
+    notifications = (
+        Notification.query.filter_by(user_id=current_user.id)
+        .order_by(Notification.created_at.desc())
+        .all()
+    )
+    return render_template("notifications.html", notifications=notifications)

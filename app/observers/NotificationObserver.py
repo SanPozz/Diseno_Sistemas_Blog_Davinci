@@ -1,4 +1,6 @@
+from app.models.Notification import Notification
 from app.observers.Observer import Observer
+from app.database import db
 
 
 class NotificationObserver(Observer):
@@ -10,12 +12,45 @@ class NotificationObserver(Observer):
 
         if event == "like":
 
-            print(f"El post '{post.title}' recibió un like")
+            owner = post.user
+            actor = data["actor"]
+
+            if owner.id != actor.id:
+
+                notification = Notification(
+                    user_id=owner.id,
+                    message=f"{actor.username} le dio like al post '{post.title}'",
+                )
+
+                db.session.add(notification)
 
         elif event == "comment":
 
-            print(f"El post '{post.title}' recibió un comentario")
+            owner = post.user
+            actor = data["actor"]
+
+            if owner.id != actor.id:
+
+                notification = Notification(
+                    user_id=owner.id,
+                    message=f"{actor.username} comentó el post '{post.title}'",
+                )
+
+                db.session.add(notification)
 
         elif event == "reply":
 
-            print(f"El post '{post.title}' recibió una respuesta a un comentario")
+            parent_comment = data["parent_comment"]
+            owner = parent_comment.user
+            actor = data["actor"]
+
+            if owner.id != actor.id:
+
+                notification = Notification(
+                    user_id=owner.id,
+                    message=f"{actor.username} respondió tu comentario en el post '{post.title}'",
+                )
+
+                db.session.add(notification)
+
+        db.session.commit()

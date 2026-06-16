@@ -12,29 +12,35 @@
 <body>
 
     <nav>
-
         <h1>Blog Social</h1>
-
         <a href="/posts/create">
             Crear publicación
         </a>
-
+        <p>-----</p>
         <a href="/landing?filter=recent">
             Recientes
         </a>
-
+        <p>-----</p>
         <a href="/landing?filter=popular">
             Populares
         </a>
-
+        <p>-----</p>
         <a href="/landing?filter=views">
             Más vistos
         </a>
 
+        <p>-----</p>
+        <a href="/notifications">
+            NOTIFICACIONES
+            {% if unread_notifications > 0 %}
+            ({{ unread_notifications }})
+            {% endif %}
+
+        </a>
+        <p>-----</p>
         <a href="/logout">
             Logout
         </a>
-
     </nav>
 
     <hr>

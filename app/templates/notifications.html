@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Noticaciones</title>
+</head>
+
+<body>
+    <h1>>Notificaciones</h1>
+
+    <a href="/landing">Volver</a>
+
+    <hr>
+    {% if notifications %}
+    <ul>
+        {% for notification in notifications %}
+        <div>
+            <p>
+                MENSAJE: {{ notification.message }}
+                ID: {{ notification.id }}
+                UUARIO: {{ notification.user_id }}
+            </p>
+            <p>
+                {{ notification.created_at }}
+            </p>
+        </div>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No tienes notificaciones.</p>
+    {% endif %}
+</body>
+
+</html>
