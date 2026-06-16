@@ -1,6 +1,8 @@
 from app.models.Posts import Post
 from app.models.Comments import Comment
 
+from app.repositories.user_repository import UserRepository
+
 from app.strategies.MostViewedPostsStrategy import MostViewedPostsStrategy
 from app.strategies.PopularPostsStrategy import PopularPostsStrategy
 from app.strategies.RecentPostsStrategy import RecentPostsStrategy
@@ -9,6 +11,7 @@ from app.subjects.PostSubject import PostSubject
 from app.observers.NotificationObserver import NotificationObserver
 
 from app.database import db
+from bleach import clean
 
 
 class PostsService:
@@ -20,8 +23,31 @@ class PostsService:
 
         # Patron Observer
         self.post_subject = PostSubject()
-
         self.post_subject.attach(NotificationObserver())
+
+    # Función para sanitizar HTML usando bleach
+    @staticmethod
+    def sanitize_html(html_content):
+
+        allowed_tags = [
+            'p', 'br', 'strong', 'em', 'u', 's', 
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 
+            'blockquote', 'code', 'pre', 'ul', 'ol', 'li', 
+            'a', 'img', 'hr', 'div', 'span'
+        ]
+        allowed_attributes = {
+            'a': ['href', 'title'], 
+            'img': ['src', 'alt', 'title'],
+            'div': ['class'],
+            'span': ['style', 'class']
+        }
+        
+        return clean(
+            html_content,
+            tags=allowed_tags,
+            attributes=allowed_attributes,
+            strip=True
+        )
 
     def get_all_posts(self):
         return self.posts_repository.get_all_posts()
@@ -48,9 +74,13 @@ class PostsService:
         if not category:
             return None, "Categoría no encontrada"
 
+        # Sanitizar contenido HTML 
+        sanitized_content = self.sanitize_html(post_data['content'])
+
         post = Post(
             title=post_data['title'],
-            content=post_data['content'],
+            content=sanitized_content,
+            image=post_data.get('image'),
             userId=post_data['user_id']
         )
 
@@ -108,14 +138,31 @@ class PostsService:
             else:
                 return None, "No hay posts recientes disponibles."
 
-    # Patron Observer
-    def add_like(self, post_id):
+    
+    def add_like(self, post_id, user_id):
 
         post = self.posts_repository.get_by_id(post_id)
 
         if not post:
             return None, "Post no encontrado"
 
+        
+        
+        user = UserRepository.get_by_id(user_id)
+        
+        if not user:
+            return None, "Usuario no encontrado"
+
+        # Verificar si el usuario ya le dio like
+        if user in post.liked_by_users:
+            # Si ya le dio like, sacarlo
+            post.liked_by_users.remove(user)
+            post.likes = max(0, post.likes - 1)
+            db.session.commit()
+            return post, None
+
+        # Si no, agregar el like
+        post.liked_by_users.append(user)
         post.likes += 1
 
         db.session.commit()
@@ -128,7 +175,7 @@ class PostsService:
 
         return post, None
 
-    # Patron Observer
+    
     def add_comment(self, post_id, user_id, text):
 
         post = self.posts_repository.get_by_id(post_id)

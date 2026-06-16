@@ -1,87 +1,126 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Diseño de Sistemas</title>
 
-    <title>Landing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <style type="text/tailwindcss">
+        @theme {
+            --color-primary: #FFFFFF;
+            --color-secondary: #0F172A;
+            --color-accent: #3B82F6;
+            --color-shade: #EEF2F6;
+        }
+    </style>
 </head>
+<body class="bg-[var(--color-shade)] flex">
 
-<body>
+    {% include 'partials/_sidebar.html' %}
 
-    <nav>
+    
+    <div class="flex-1 flex flex-col">
 
-        <h1>Blog Social</h1>
+        
+        <header class="px-8 py-12 bg-gradient-to-br from-[var(--color-shade)] to-[var(--color-shade)]/50">
+            <div class="max-w-4xl mx-auto">
+                <div class="mb-8">
+                    <h1 class="text-4xl font-bold antialiased font-['Plus_Jakarta_Sans'] text-[var(--color-secondary)] mb-3">
+                        Últimos Artículos
+                    </h1>
+                    <p class="text-lg text-[var(--color-secondary)]/70 font-['Plus_Jakarta_Sans']">
+                        Descubre las historias más recientes de diseño de sistemas
+                    </p>
+                </div>
+            </div>
+        </header>
 
-        <a href="/posts/create">
-            Crear publicación
-        </a>
+    
+    <main class="px-8 py-12 flex-1">
+        <div class="max-w-4xl mx-auto">
+            <!-- Posts -->
+            <div class="space-y-6">
+                {% if posts %}
+                    {% for post in posts %}
+                        {% set category = post.categories[0].name if post.categories else 'Sin categoría' %}
+                        {% set author_image = 'default-avatar.png' %}
+                        
+                        <a href="/posts/{{ post.id }}" class="flex flex-col rounded-2xl bg-white/20 border-2 border-[var(--color-accent)]/20 hover:border-[var(--color-accent)]/50 hover:bg-white/30 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-[0_8px_16px_-2px_var(--color-accent)]/20 overflow-hidden group cursor-pointer no-underline">
+                            
+                            
+                            <div class="w-full h-80 bg-gradient-to-br from-[var(--color-accent)]/20 to-[var(--color-accent)]/10 flex items-center justify-center overflow-hidden">
+                                {% if post.image %}
+                                    <img src="{{ url_for('static', filename='images/' + post.image) }}" alt="{{ post.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                {% else %}
+                                    <div class="w-full h-full flex items-center justify-center text-[var(--color-accent)]/40">
+                                        <svg class="w-20 h-20" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"></path>
+                                        </svg>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Post Content -->
+                            <div class="p-6 flex flex-col gap-4 flex-1">
+                                
+                                
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <img src="{{ url_for('static', filename='images/' + author_image) }}" alt="{{ post.user.username }}" class="w-10 h-10 rounded-full object-cover border border-[var(--color-accent)]/30">
+                                        <div class="flex flex-col">
+                                            <p class="text-sm font-semibold text-[var(--color-secondary)]">{{ post.user.username }}</p>
+                                        </div>
+                                    </div>
+                                    <span class="text-xs font-semibold px-3 py-1 rounded-full bg-[var(--color-accent)]/10 text-[var(--color-accent)] border border-[var(--color-accent)]/30">{{ category }}</span>
+                                </div>
 
-        <a href="/landing?filter=recent">
-            Recientes
-        </a>
+                                
+                                <h3 class="text-2xl font-semibold text-[var(--color-secondary)] line-clamp-2 group-hover:text-[var(--color-accent)] transition-colors">{{ post.title }}</h3>
+                                
+                                
+                                <p class="text-[var(--color-secondary)]/70 line-clamp-2">{{ post.content | striptags | truncate(150) }}</p>
 
-        <a href="/landing?filter=popular">
-            Populares
-        </a>
+                                
+                                <div class="pt-4 border-t border-[var(--color-accent)]/10 flex justify-between items-center">
+                                    <div class="flex gap-4 text-sm text-[var(--color-secondary)]/60">
+                                        <span>👁️ {{ post.visitas }} visitas</span>
+                                        <span>❤️ {{ post.likes }} likes</span>
+                                    </div>
+                                    <span class="text-sm font-semibold text-[var(--color-accent)] group-hover:text-[var(--color-accent)]/80 transition-colors">Leer más →</span>
+                                </div>
 
-        <a href="/landing?filter=views">
-            Más vistos
-        </a>
+                            </div>
 
-        <a href="/logout">
-            Logout
-        </a>
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <div class="flex flex-col items-center justify-center py-20">
+                        <div class="text-center">
+                            <p class="text-xl text-[var(--color-secondary)]/70 font-['Plus_Jakarta_Sans'] mb-4">
+                                No hay posts aún
+                            </p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </main>
 
-    </nav>
-
-    <hr>
-
-    <h2>Publicaciones</h2>
-
-    {% for post in posts %}
-
-    <div>
-
-        <h3>
-            {{ post.title }}
-        </h3>
-
-        <p>
-            {{ post.content[:150] }}
-        </p>
-
-        <p>
-            Autor:
-            {{ post.user.username }}
-        </p>
-
-        <p>
-            Likes:
-            {{ post.likes }}
-        </p>
-
-        <p>
-            Visitas:
-            {{ post.visitas }}
-        </p>
-        <p>
-            Categoria:
-            {% for category in post.categories %}
-            {{category.name}}
-            {% endfor %}
-        </p>
-        <a href="/posts/{{ post.id }}">
-            Ver publicación
-        </a>
-
+        
+        <footer class="bg-[var(--color-secondary)] text-[var(--color-primary)] px-8 py-8 border-t border-[var(--color-accent)]/20 mt-12">
+            <div class="max-w-4xl mx-auto">
+                <div class="text-center text-[var(--color-primary)]/50 text-sm font-['Plus_Jakarta_Sans']">
+                    <p>&copy; 2024 Blog de Diseño de Sistemas. Todos los derechos reservados.</p>
+                </div>
+            </div>
+        </footer>
     </div>
-
-    <hr>
-
-    {% endfor %}
 
 </body>
 

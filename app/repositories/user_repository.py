@@ -13,6 +13,10 @@ class UserRepository:
         return User.query.filter_by(username=username).first()
 
     @staticmethod
+    def get_by_id(user_id):
+        return User.query.get(user_id)
+
+    @staticmethod
     def create(user):
         db.session.add(user)
         db.session.commit()

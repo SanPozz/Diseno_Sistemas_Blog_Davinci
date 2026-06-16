@@ -1,11 +1,11 @@
 {% macro feature_card(icon, title, description) %}
 <div class="flex flex-col gap-4 p-6 rounded-2xl bg-white/20 border-4 border-[var(--color-accent)]/20 hover:border-[var(--color-accent)]/50 hover:bg-white/30 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-[0_8px_16px_-2px_var(--color-accent)]/20 hover:scale-105 hover:-translate-y-2 w-full max-w-md">
-    <!-- Icon Container -->
+    
     <div class="w-12 h-12 rounded-xl bg-[var(--color-accent)]/10 flex items-center justify-center">
         <img src="{{ url_for('static', filename='icons/' + icon) }}" alt="{{ title }}" class="w-6 h-6">
     </div>
     
-    <!-- Content -->
+    
     <div class="flex flex-col gap-2">
         <h3 class="text-lg font-semibold text-[var(--color-secondary)] border-b border-[var(--color-accent)]/70">{{ title }}</h3>
         <p class="text-sm text-[var(--color-secondary)]/70">{{ description }}</p>

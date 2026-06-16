@@ -1,26 +1,26 @@
-{% macro post_card(author_image, author_name, category, post_title, post_excerpt) %}
+{% macro post_card(author_image, author_name, category, post_title, post_description) %}
 <div class="flex flex-col gap-4 p-5 rounded-2xl bg-white/20 border-2 border-[var(--color-accent)]/20 hover:border-[var(--color-accent)]/50 hover:bg-white/30 transition-all duration-300 backdrop-blur-sm shadow-lg hover:shadow-[0_8px_16px_-2px_var(--color-accent)]/20 w-full max-w-sm h-72 flex-shrink-0">
     
     
     <div class="flex items-center justify-between">
-        <!-- Profile Img -->
+        
         <div class="flex items-center gap-3">
             <img src="{{ url_for('static', filename='images/' + author_image) }}" alt="{{ author_name }}" class="w-10 h-10 rounded-full object-cover border border-[var(--color-accent)]/30">
             <div class="flex flex-col">
                 <p class="text-sm font-semibold text-[var(--color-secondary)]">{{ author_name }}</p>
             </div>
         </div>
-        <!-- Category Tag -->
+        
         <span class="text-xs font-semibold px-3 py-1 rounded-full bg-[var(--color-accent)]/10 text-[var(--color-accent)] border border-[var(--color-accent)]/30">{{ category }}</span>
     </div>
 
-    <!-- Content -->
+    
     <div class="flex flex-col gap-3 flex-1">
         <h3 class="text-base font-semibold text-[var(--color-secondary)] line-clamp-2">{{ post_title }}</h3>
-        <p class="text-sm text-[var(--color-secondary)]/70 line-clamp-3">{{ post_excerpt }}</p>
+        <p class="text-sm text-[var(--color-secondary)]/70 line-clamp-3">{{ post_description }}</p>
     </div>
 
-    <!-- Read More -->
+    
     <div class="pt-2 border-t border-[var(--color-accent)]/10">
         <a href="" class="text-sm font-semibold text-[var(--color-accent)] hover:text-[var(--color-accent)]/80 transition-colors">Leer más →</a>
     </div>

@@ -20,10 +20,10 @@ def register_controller():
         user = RESULT_REGISTER[0]
 
         if error_message:
-            return redirect(f"/register?error=true&message={error_message}")
+            return redirect(f"/auth/register?error=true&message={error_message}")
         
         if user:
-            return redirect("/login?registered=true&error=false")
+            return redirect("/auth/login?registered=true&error=false")
     return render_template("register.html")
 
 
@@ -38,7 +38,7 @@ def login_controller():
         user = RESULT_LOGIN[0]
 
         if error_message:
-            return redirect(f"/login?error=true&message={error_message}")
+            return redirect(f"/auth/login?error=true&message={error_message}")
 
         if user:
             login_user(user)
@@ -47,8 +47,7 @@ def login_controller():
 
         # TODO: Implementar JSON WEB TOKEN con cookies y utilizar @jwt_required en rutas protegidas
 
-        if user.role == "admin":
-            return redirect("/admin")
-        return redirect("/landing")
+
+        return redirect("/home")
 
     return render_template("login.html")

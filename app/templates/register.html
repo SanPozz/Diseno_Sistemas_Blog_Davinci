@@ -38,7 +38,7 @@
             <a href="/" class="text-xl antialiased font-semibold font-['Plus_Jakarta_Sans'] hover:text-[var(--color-accent)] transition-colors">Blog</a>
         </div>
         <div class="flex items-center gap-4">
-            <a href="/login" class="text-[var(--color-secondary)] hover:text-[var(--color-accent)] transition-colors font-['Plus_Jakarta_Sans']">Iniciar Sesión</a>
+            <a href="/auth/login" class="text-[var(--color-secondary)] hover:text-[var(--color-accent)] transition-colors font-['Plus_Jakarta_Sans']">Iniciar Sesión</a>
         </div>
     </nav>
 
@@ -53,24 +53,29 @@
                     <p class="text-[var(--color-secondary)]/60 font-['Plus_Jakarta_Sans']">Únete a nuestra comunidad de escritores</p>
                 </div>
 
-                
-                <form class="space-y-4">
+                {% if request.args.get('error') == 'true' %}
+                <div class="mb-6 p-4 rounded-xl bg-red-50/40 border border-red-200/50 text-red-700 text-sm font-['Plus_Jakarta_Sans']">
+                    <p class="font-semibold">{{ request.args.get('message', 'Error al registrar') }}</p>
+                </div>
+                {% endif %}
+
+                <form method="POST" action="/auth/register" class="space-y-4">
                     
                     <div class="flex flex-col gap-1.5">
-                        <label for="name" class="text-sm font-semibold text-[var(--color-secondary)] font-['Plus_Jakarta_Sans']">Nombre Completo</label>
-                        <input type="text" id="name" name="name" placeholder="Juan Pérez" class="px-4 py-3 rounded-xl bg-white/20 border border-[var(--color-accent)]/20 focus:border-[var(--color-accent)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/20 text-[var(--color-secondary)] placeholder-[var(--color-secondary)]/40 font-['Plus_Jakarta_Sans'] transition-all">
+                        <label for="username" class="text-sm font-semibold text-[var(--color-secondary)] font-['Plus_Jakarta_Sans']">Nombre de usuario</label>
+                        <input type="text" id="username" name="username" placeholder="tu_usuario" required class="px-4 py-3 rounded-xl bg-white/20 border border-[var(--color-accent)]/20 focus:border-[var(--color-accent)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/20 text-[var(--color-secondary)] placeholder-[var(--color-secondary)]/40 font-['Plus_Jakarta_Sans'] transition-all">
                     </div>
 
                     
                     <div class="flex flex-col gap-1.5">
                         <label for="email" class="text-sm font-semibold text-[var(--color-secondary)] font-['Plus_Jakarta_Sans']">Correo Electrónico</label>
-                        <input type="email" id="email" name="email" placeholder="correo@ejemplo.com" class="px-4 py-3 rounded-xl bg-white/20 border border-[var(--color-accent)]/20 focus:border-[var(--color-accent)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/20 text-[var(--color-secondary)] placeholder-[var(--color-secondary)]/40 font-['Plus_Jakarta_Sans'] transition-all">
+                        <input type="email" id="email" name="email" placeholder="correo@ejemplo.com" required class="px-4 py-3 rounded-xl bg-white/20 border border-[var(--color-accent)]/20 focus:border-[var(--color-accent)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/20 text-[var(--color-secondary)] placeholder-[var(--color-secondary)]/40 font-['Plus_Jakarta_Sans'] transition-all">
                     </div>
 
                     
                     <div class="flex flex-col gap-1.5">
                         <label for="password" class="text-sm font-semibold text-[var(--color-secondary)] font-['Plus_Jakarta_Sans']">Contraseña</label>
-                        <input type="password" id="password" name="password" placeholder="••••••••" class="px-4 py-3 rounded-xl bg-white/20 border border-[var(--color-accent)]/20 focus:border-[var(--color-accent)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/20 text-[var(--color-secondary)] placeholder-[var(--color-secondary)]/40 font-['Plus_Jakarta_Sans'] transition-all">
+                        <input type="password" id="password" name="password" placeholder="••••••••" required class="px-4 py-3 rounded-xl bg-white/20 border border-[var(--color-accent)]/20 focus:border-[var(--color-accent)]/50 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/20 text-[var(--color-secondary)] placeholder-[var(--color-secondary)]/40 font-['Plus_Jakarta_Sans'] transition-all">
                     </div>
 
                     
@@ -112,7 +117,7 @@
                 
                 <div class="text-center mt-4">
                     <p class="text-[var(--color-secondary)]/70 font-['Plus_Jakarta_Sans']">
-                        ¿Ya tienes cuenta? <a href="/login" class="text-[var(--color-accent)] hover:underline font-semibold">Inicia sesión aquí</a>
+                        ¿Ya tienes cuenta? <a href="/auth/login" class="text-[var(--color-accent)] hover:underline font-semibold">Inicia sesión aquí</a>
                     </p>
                 </div>
 

@@ -1,36 +1,15 @@
 from flask import render_template, request, redirect, jsonify
 from flask_login import current_user, login_required
 from markupsafe import escape
-from app.database import db
-from app.models.Posts import Post
-from app.models.Categories import Category
-from app.strategies.RecentPostsStrategy import RecentPostsStrategy
-from app.strategies.PopularPostsStrategy import PopularPostsStrategy
-from app.strategies.MostViewedPostsStrategy import MostViewedPostsStrategy
 
 from app.services.posts_service import PostsService
-
 from app.repositories.post_repository import PostRepository
 from app.repositories.categories_repository import CategoryRepository
+from app.utils.image_utils import save_post_image
 
 posts_service = PostsService(PostRepository, CategoryRepository)
 
 
-# Landing controller
-def landing_controller():
-
-    # es un filtro dinamico que cambia segun la estrategia
-    filter_type = request.args.get("filter", "recent")
-
-    RESULT_SERVICE = posts_service.get_posts_by_strategy(filter_type)
-
-    posts = RESULT_SERVICE[0]
-    error = RESULT_SERVICE[1]
-
-    if error:
-        return render_template("landing.html", error=error)
-
-    return render_template("landing.html", posts=posts)
 
 
 # creacion de un post
@@ -40,12 +19,21 @@ def create_post_controller():
     if request.method == "POST":
 
         title = escape(request.form["title"])
-        content = escape(request.form["content"])
+        content = request.form["content"]  
         category_id = request.form["category"]
+        
+        
+        image_filename = None
+        if 'image' in request.files:
+            file = request.files['image']
+            image_filename, error = save_post_image(file)
+            if error:
+                return render_template("create_post.html", error=error, categories=CategoryRepository.get_all())
 
         post_data = {
             "title": title,
             "content": content,
+            "image": image_filename,
             "user_id": current_user.id,
             "category_id": category_id
         }
@@ -84,7 +72,7 @@ def post_detail_controller(post_id):
 @login_required
 def add_like_controller(post_id):
 
-    RESULT_SERVICE = posts_service.add_like(post_id)
+    RESULT_SERVICE = posts_service.add_like(post_id, current_user.id)
 
     post = RESULT_SERVICE[0]
     error = RESULT_SERVICE[1]

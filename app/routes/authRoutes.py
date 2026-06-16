@@ -30,22 +30,6 @@ def register():
     return register_controller()
 
 
-@auth_bp.route("/landing")
-@login_required
-def landing():
-    if current_user.role != "user":
-        return "Acceso denegado"
-    return render_template("landing.html")
-
-
-@auth_bp.route("/admin")
-@login_required
-def admin():
-    if current_user.role != "admin":
-        return "Acceso denegado"
-    return render_template("admin.html")
-
-
 @auth_bp.route("/logout")
 @login_required
 def logout():
