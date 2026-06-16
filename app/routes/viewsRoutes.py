@@ -1,4 +1,4 @@
-from flask import Blueprint
+from flask import Blueprint, render_template
 
 from app.controllers.viewController import home_controller, landing_controller
 

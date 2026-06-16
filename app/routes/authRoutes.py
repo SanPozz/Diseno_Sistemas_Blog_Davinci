@@ -4,7 +4,7 @@ from flask_login import login_required, current_user, logout_user
 from flask import url_for
 from authlib.integrations.flask_client import OAuth
 from app.extensions import oauth
-from app.controllers.authController import login_controller, register_controller
+from app.controllers.authController import login_controller, register_controller, profile_controller
 from flask_login import login_user
 from app.models.Users import User
 from app.database import db
@@ -35,6 +35,12 @@ def register():
 def logout():
     logout_user()
     return redirect("/login")
+
+
+@auth_bp.route("/profile")
+@login_required
+def profile():
+    return profile_controller()
 
 
 # google

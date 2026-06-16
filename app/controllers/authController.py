@@ -1,5 +1,5 @@
 from flask import request, redirect, render_template
-from flask_login import login_user
+from flask_login import login_user, logout_user, login_required, current_user
 # from flask_jwt_extended import create_access_token
 from app.services.auth_service import AuthService
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -51,3 +51,12 @@ def login_controller():
         return redirect("/home")
 
     return render_template("login.html")
+
+
+@login_required
+def profile_controller():
+    
+    if not current_user.is_authenticated:
+        return redirect("/auth/login")
+    
+    return render_template("profile.html", user=current_user, posts=current_user.posts)
