@@ -2,6 +2,8 @@ from app.models.Posts import Post
 from app.models.Comments import Comment
 
 from app.repositories.user_repository import UserRepository
+from app.repositories.post_repository import PostRepository
+from app.repositories.categories_repository import CategoryRepository
 
 from app.strategies.MostViewedPostsStrategy import MostViewedPostsStrategy
 from app.strategies.PopularPostsStrategy import PopularPostsStrategy
@@ -175,7 +177,11 @@ class PostsService:
 
         return post, None
 
-    
+
+    def get_post_comments_tree(self, post):
+        from app.composite.CommentBuilder import CommentBuilder
+        return CommentBuilder.build_tree(post.comments)
+
     def add_comment(self, post_id, user_id, text):
 
         post = self.posts_repository.get_by_id(post_id)
@@ -183,10 +189,13 @@ class PostsService:
         if not post:
             return None, "Post no encontrado"
 
+        # Sanitizar texto del comentario
+        cleaned_text = self.sanitize_html(text)
+
         comment = Comment(
             user_id=user_id,
             post_id=post_id,
-            text=text
+            text=cleaned_text
         )
 
         db.session.add(comment)
@@ -199,3 +208,34 @@ class PostsService:
         })
 
         return comment, None
+
+    def add_reply(self, post_id, user_id, text, father_id):
+
+        post = self.posts_repository.get_by_id(post_id)
+
+        if not post:
+            return None, "Post no encontrado"
+
+        parent = Comment.query.get(father_id)
+
+        if not parent or parent.post_id != post_id:
+            return None, "Comentario padre no encontrado"
+
+        # Sanitizar texto de la respuesta
+        cleaned_text = self.sanitize_html(text)
+
+        reply = Comment(
+            user_id=user_id,
+            post_id=post_id,
+            father_id=father_id,
+            text=cleaned_text
+        )
+
+        db.session.add(reply)
+        db.session.commit()
+
+        return reply, None
+
+
+# Instancia única de PostsService (patrón Singleton por instancia de módulo)
+posts_service = PostsService(PostRepository, CategoryRepository)

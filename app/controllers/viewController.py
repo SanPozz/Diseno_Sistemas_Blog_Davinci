@@ -1,12 +1,7 @@
 from flask import render_template, request, redirect, jsonify
 from flask_login import current_user, login_required
 
-from app.services.posts_service import PostsService
-
-from app.repositories.post_repository import PostRepository
-from app.repositories.categories_repository import CategoryRepository
-
-posts_service = PostsService(PostRepository, CategoryRepository)
+from app.services.posts_service import posts_service
 
 # Landing controller
 def landing_controller():

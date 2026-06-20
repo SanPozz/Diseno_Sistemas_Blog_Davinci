@@ -2,12 +2,9 @@ from flask import render_template, request, redirect, jsonify
 from flask_login import current_user, login_required
 from markupsafe import escape
 
-from app.services.posts_service import PostsService
-from app.repositories.post_repository import PostRepository
+from app.services.posts_service import posts_service
 from app.repositories.categories_repository import CategoryRepository
 from app.utils.image_utils import save_post_image
-
-posts_service = PostsService(PostRepository, CategoryRepository)
 
 
 
@@ -66,7 +63,9 @@ def post_detail_controller(post_id):
     if error:
         return render_template("post_detail.html", error=error)
 
-    return render_template("post_detail.html", post=post)
+    comment_tree = posts_service.get_post_comments_tree(post)
+
+    return render_template("post_detail.html", post=post, comment_tree=comment_tree)
 
 # Like a un post
 @login_required
@@ -85,11 +84,14 @@ def add_like_controller(post_id):
         "likes": post.likes
     }), 200
 
-# Comentar un post
+
 @login_required
 def add_comment_controller(post_id):
+    
+    text = request.form.get("text", "").strip()
 
-    text = request.form["text"]
+    if not text:
+        return redirect(f"/posts/{post_id}?error=El comentario no puede estar vacío#comments")
 
     RESULT_SERVICE = posts_service.add_comment(
         post_id,
@@ -101,9 +103,31 @@ def add_comment_controller(post_id):
     error = RESULT_SERVICE[1]
 
     if error:
-        return jsonify({"error": error}), 404
+        return redirect(f"/posts/{post_id}?error={error}#comments")
 
-    return jsonify({
-        "message": "Comentario agregado",
-        "comment": comment.to_dict()
-    }), 201
+    return redirect(f"/posts/{post_id}#comments")
+
+
+# Responder un comentario 
+@login_required
+def add_reply_controller(post_id, comment_id):
+
+    text = request.form.get("text", "").strip()
+
+    if not text:
+        return redirect(f"/posts/{post_id}?error=El comentario no puede estar vacío#comments")
+
+    RESULT_SERVICE = posts_service.add_reply(
+        post_id,
+        current_user.id,
+        text,
+        comment_id
+    )
+
+    comment = RESULT_SERVICE[0]
+    error = RESULT_SERVICE[1]
+
+    if error:
+        return redirect(f"/posts/{post_id}?error={error}#comments")
+
+    return redirect(f"/posts/{post_id}#comments")

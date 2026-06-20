@@ -1,3 +1,4 @@
+{% from 'partials/_comment_tree.html' import render_comment %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -252,6 +253,66 @@
                     </a>
                 </div>
 
+                <!-- ===== SECCIÓN DE COMENTARIOS (Patrón Composite) ===== -->
+                <div class="mt-14">
+
+                    <!-- Encabezado -->
+                    <div class="flex items-center gap-3 mb-8">
+                        <svg class="w-6 h-6 text-[var(--color-accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        <h3 class="text-2xl font-bold text-[var(--color-secondary)] font-['Plus_Jakarta_Sans']">Comentarios</h3>
+                        <span id="commentCount" class="px-3 py-1 rounded-full bg-[var(--color-accent)]/10 text-[var(--color-accent)] border border-[var(--color-accent)]/30 text-sm font-semibold font-['Plus_Jakarta_Sans']">
+                            {{ post.comments | length }}
+                        </span>
+                    </div>
+
+                    <!-- Formulario de nuevo comentario -->
+                    {% if current_user.is_authenticated %}
+                    <div class="mb-8 p-6 bg-[var(--color-primary)] rounded-2xl border border-[var(--color-accent)]/20 shadow-sm">
+                        <p class="font-semibold text-[var(--color-secondary)] mb-4 font-['Plus_Jakarta_Sans']">Deja un comentario</p>
+                        <form action="/posts/{{ post.id }}/comment" method="POST">
+                            <textarea
+                                name="text"
+                                rows="3"
+                                placeholder="Escribe tu comentario..."
+                                class="w-full border border-[var(--color-accent)]/20 rounded-xl p-4 focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]/30 bg-[var(--color-shade)] font-['Plus_Jakarta_Sans'] text-[var(--color-secondary)] resize-none text-sm"
+                                required></textarea>
+                            <div class="flex justify-end mt-3">
+                                <button type="submit"
+                                    class="bg-[var(--color-accent)] px-6 py-2.5 text-[var(--color-primary)] rounded-lg font-['Plus_Jakarta_Sans'] font-semibold hover:bg-[var(--color-accent)]/80 transition-colors text-sm">
+                                    Comentar
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                    {% else %}
+                    <div class="mb-8 p-6 bg-[var(--color-primary)]/60 rounded-2xl border border-[var(--color-accent)]/20 text-center">
+                        <p class="text-[var(--color-secondary)]/60 font-['Plus_Jakarta_Sans'] text-sm">
+                            <a href="/auth/login" class="text-[var(--color-accent)] hover:underline font-semibold">Inicia sesión</a>
+                            para dejar un comentario.
+                        </p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Lista raíz de comentarios -->
+                    <div id="commentsList" class="space-y-6">
+                        {% for comment in comment_tree %}
+                                {{ render_comment(comment, 0, post.id, current_user) }}
+                        {% endfor %}
+
+                        {% if not comment_tree %}
+                        <div id="noCommentsPlaceholder" class="text-center py-16 text-[var(--color-secondary)]/40 font-['Plus_Jakarta_Sans']">
+                            <svg class="w-12 h-12 mx-auto mb-4 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                            <p class="text-sm">Sé el primero en comentar</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <!-- ===== FIN SECCIÓN DE COMENTARIOS ===== -->
+
             </div>
         </main>
 
@@ -268,6 +329,9 @@
 </body>
 
 <script>
+    const POST_ID = {{ post.id }};
+
+    // ── Like ──────────────────────────────────────────────────────────────────
     document.getElementById('likeBtn').addEventListener('click', async function() {
         const postId = this.dataset.postId;
         const likeBtn = this;
@@ -286,11 +350,9 @@
                 const data = await response.json();
                 likeCount.textContent = data.likes;
                 
-                // Animar el ícono
                 likeIcon.style.fill = 'currentColor';
                 likeBtn.classList.add('text-[var(--color-accent)]');
                 likeBtn.classList.remove('text-[var(--color-secondary)]/60');
-                
                 
                 likeIcon.style.animation = 'scale 0.3s ease-in-out';
                 setTimeout(() => {
@@ -301,6 +363,26 @@
             console.error('Error al dar like:', error);
         }
     });
+
+    // Mostrar/ocultar formulario de respuesta
+    function toggleReplyForm(commentId) {
+        const id = `reply-form-${commentId}`;
+        const el = document.getElementById(id);
+        if (!el) return;
+        
+        document.querySelectorAll('[id^="reply-form-"]').forEach(e => {
+            if (e.id !== id) e.classList.add('hidden');
+        });
+        const isHidden = el.classList.contains('hidden');
+        if (isHidden) {
+            el.classList.remove('hidden');
+            const ta = el.querySelector('textarea');
+            if (ta) { ta.focus(); ta.scrollIntoView({behavior: 'smooth', block: 'center'}); }
+        } else {
+            el.classList.add('hidden');
+        }
+    }
+
 </script>
 
 <style>

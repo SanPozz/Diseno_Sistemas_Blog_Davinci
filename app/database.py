@@ -1,6 +1,24 @@
 from flask_sqlalchemy import SQLAlchemy
 
-db = SQLAlchemy()
+
+class SingletonMeta(type):
+    """garantiza una única instancia de SQLAlchemy."""
+    
+    _instances = {}
+    
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super(SingletonMeta, cls).__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+
+class DatabaseManager(SQLAlchemy, metaclass=SingletonMeta):
+    """Wrapper singleton para SQLAlchemy que garantiza una única instancia."""
+    pass
+
+
+# Instancia singleton de la base de datos
+db = DatabaseManager()
 
 
 def init_db(app):

@@ -24,6 +24,7 @@ def create_app():
 
     init_db(app)
 
+
     app.register_blueprint(views_bp)
     app.register_blueprint(post_bp, url_prefix='/posts')
     app.register_blueprint(auth_bp, url_prefix='/auth')

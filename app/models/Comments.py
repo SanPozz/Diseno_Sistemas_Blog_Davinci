@@ -30,9 +30,10 @@ class Comment(db.Model):
         return {
             "id": self.id,
             "user_id": self.user_id,
+            "username": self.user.username if self.user else "Desconocido",
             "post_id": self.post_id,
             "father_id": self.father_id,
             "text": self.text,
-            "created_at": self.created_at,
+            "created_at": self.created_at.isoformat() if self.created_at else None,
             "replies": [reply.to_dict() for reply in self.replies],
         }
