@@ -1,5 +1,6 @@
 from flask import request, redirect, render_template
 from flask_login import login_user, logout_user, login_required, current_user
+
 # from flask_jwt_extended import create_access_token
 from app.services.auth_service import AuthService
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -21,7 +22,7 @@ def register_controller():
 
         if error_message:
             return redirect(f"/auth/register?error=true&message={error_message}")
-        
+
         if user:
             return redirect("/auth/login?registered=true&error=false")
     return render_template("register.html")
@@ -47,7 +48,6 @@ def login_controller():
 
         # TODO: Implementar JSON WEB TOKEN con cookies y utilizar @jwt_required en rutas protegidas
 
-
         return redirect("/home")
 
     return render_template("login.html")
@@ -55,8 +55,21 @@ def login_controller():
 
 @login_required
 def profile_controller():
-    
+
     if not current_user.is_authenticated:
+
         return redirect("/auth/login")
-    
-    return render_template("profile.html", user=current_user, posts=current_user.posts)
+
+    posts = current_user.posts
+
+    posts_count = len(posts)
+
+    total_likes = sum(p.likes for p in posts)
+
+    return render_template(
+        "profile.html",
+        user=current_user,
+        posts=posts,
+        posts_count=posts_count,
+        total_likes=total_likes,
+    )
