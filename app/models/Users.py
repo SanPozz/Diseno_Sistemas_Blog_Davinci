@@ -25,6 +25,9 @@ class User(db.Model, UserMixin):
 
     posts = db.relationship("Post", back_populates="user", lazy=True)
     comments = db.relationship("Comment", back_populates="user", lazy=True)
+    notifications = db.relationship(
+        "Notification", back_populates="user", lazy="dynamic"
+    )
 
     def __repr__(self):
         return f"<User {self.username} User ID: {self.id}>"
